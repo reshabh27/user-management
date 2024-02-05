@@ -2,6 +2,7 @@ import React, { useEffect, useState } from "react";
 import { Card, Col, Container, Row, Button } from "react-bootstrap";
 import { customFetch } from "../utils";
 import { useGlobalContext } from "../context";
+import { Link } from "react-router-dom";
 
 const Landing = () => {
   const [profiles, setProfiles] = useState([]);
@@ -19,11 +20,6 @@ const Landing = () => {
 
     fetchData();
   }, []);
-
-  const handleUpdate = (profileId) => {
-    // Implement the update logic based on the profileId
-    console.log(`Update profile with id: ${profileId}`);
-  };
 
   const handleDelete = async (profileId) => {
     try {
@@ -70,21 +66,15 @@ const Landing = () => {
                     >
                       Delete
                     </Button>
-                    <Button
-                      variant="primary"
-                      onClick={() => handleUpdate(profile.id)}
-                    >
-                      Update
-                    </Button>
+                    <Link to={`/updateuser/${profile.id}`}>
+                      <Button variant="primary">Update</Button>
+                    </Link>
                   </>
                 )}
                 {state.loggedUser?.role === "editor" && (
-                  <Button
-                    variant="primary"
-                    onClick={() => handleUpdate(profile.id)}
-                  >
-                    Update
-                  </Button>
+                  <Link to={`/updateuser/${profile.id}`}>
+                    <Button variant="primary">Update</Button>
+                  </Link>
                 )}
               </Card.Body>
             </Card>

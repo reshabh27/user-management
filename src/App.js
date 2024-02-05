@@ -9,8 +9,11 @@ import { HomeLayout } from './pages/HomeLayout';
 import { action as signUpAction } from "./pages/SignUp";
 // import { action as loginAction } from "./pages/Login";
 
+import { loader as updateUserLoader } from "./pages/UpdateUser";
+
 import ErrorElement from "./components/ErrorElement";
 import AddUser  from './pages/AddUser';
+import { UpdateUser } from './pages/UpdateUser';
 
 
 
@@ -25,9 +28,14 @@ const router = createBrowserRouter([
         element: <Landing />,
       },
       {
-        path:'/adduser',
-        element:<AddUser/>
-      }
+        path: "/adduser",
+        element: <AddUser />,
+      },
+      {
+        path: "/updateuser/:id",
+        element: <UpdateUser />,
+        loader: updateUserLoader,
+      },
     ],
   },
   {

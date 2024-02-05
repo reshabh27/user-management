@@ -1,20 +1,19 @@
-import React, { useState } from "react";
-import { AddUserFormInput } from "../components/AddUserFormInput";
-import { customFetch } from "../utils";
+import React, { useState } from 'react'
+import { AddUserFormInput } from '../components/AddUserFormInput';
+import { customFetch } from '../utils';
+import { useLoaderData } from 'react-router-dom';
 
-const AddUser = () => {
-  const [formData, setFormData] = useState({
-    fullname: "",
-    email: "",
-    password: "",
-    role: "user",
-    empId: "",
-    department: "",
-    userPic:
-      "https://cdn.pixabay.com/photo/2015/10/05/22/37/blank-profile-picture-973460_960_720.png",
-    bio: "NA",
-    interest: [],
-  });
+export const loader = async ({params}) => {
+  const response = await customFetch.get(`/profiles/${params.id}`);
+  const userToUpdate = response.data;
+//   console.log(userToUpdate);
+  return { userToUpdate };
+};
+
+export const UpdateUser = () => {
+    const fetchedData = useLoaderData()
+    // console.log(fetchedData);
+ const [formData, setFormData] = useState(fetchedData.userToUpdate);
 
   const handleInputChange = (e) => {
     const { name, value } = e.target;
@@ -28,9 +27,7 @@ const AddUser = () => {
     const role = e.target.value;
     setFormData((prevData) => ({
       ...prevData,
-      role,
-      empId: role === 'admin' ? '' : prevData.empId,
-      department: role === 'editor' ? '' : prevData.department,
+      role
     }));
   };
 
@@ -39,13 +36,15 @@ const AddUser = () => {
     setFormData({...formData,["interest"]:interests})
   };
 
-  const handleSubmit = async (e) => {
+  const handleUpdate = async (e) => {
     try {
       e.preventDefault();
       // Assuming customFetch.post returns a response
-      const response = await customFetch.post("/profiles", { ...formData });
+      const response = await customFetch.patch(`/profiles/${formData.id}`, { ...formData });
+    //   console.log(response);
       // Handle the response as needed
-      alert("Submit successful:", response);
+      alert("Submit successful:");
+      
     } catch (error) {
       alert("Error submitting the form:");
     }
@@ -53,7 +52,7 @@ const AddUser = () => {
 
   return (
     <div className="container mt-4">
-      <form onSubmit={handleSubmit}>
+      <form onSubmit={handleUpdate}>
         <AddUserFormInput inptype="text" inpId="fullname" pHolder="Enter Full Name" text="Full Name" 
         fieldValue={formData.fullname} handleChange={handleInputChange} />
         
@@ -117,17 +116,15 @@ const AddUser = () => {
             className="form-control w-50 m-auto"
             id="interest"
             name="interest"
-            value={formData.interest.join(', ')}
+            value={formData.interest?.join(', ')}
             onChange={handleInterestChange}
           />
         </div>
 
         <button type="submit" className="btn btn-primary">
-          Submit
+          Update User
         </button>
       </form>
     </div>
   );
-};
-
-export default AddUser;
+}
