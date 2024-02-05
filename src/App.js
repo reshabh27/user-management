@@ -10,6 +10,7 @@ import { action as signUpAction } from "./pages/SignUp";
 // import { action as loginAction } from "./pages/Login";
 
 import ErrorElement from "./components/ErrorElement";
+import AddUser  from './pages/AddUser';
 
 
 
@@ -23,6 +24,10 @@ const router = createBrowserRouter([
         index: true,
         element: <Landing />,
       },
+      {
+        path:'/adduser',
+        element:<AddUser/>
+      }
     ],
   },
   {

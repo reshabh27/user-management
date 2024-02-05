@@ -12,11 +12,9 @@ const globalReducer = (state, action) => {
   switch (action.type) {
     case "LOGIN_USER":
       const { role } = action.payload;
-
       // Set canEdit and canDelete based on the user's role
       let canEdit = false;
       let canDelete = false;
-
       if (role === "admin") {
         canEdit = true;
         canDelete = true;
@@ -29,6 +27,14 @@ const globalReducer = (state, action) => {
         loggedUser: action.payload,
         canEdit,
         canDelete,
+      };
+      
+    case "LOGOUT_USER":
+      return {
+        ...state,
+        loggedUser: null,
+        canEdit: false,
+        canDelete: false,
       };
     // ... other cases
     default:

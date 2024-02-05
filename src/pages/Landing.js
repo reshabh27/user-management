@@ -1,15 +1,16 @@
 import React, { useEffect, useState } from "react";
-import { Card, Col, Container, Row } from "react-bootstrap";
+import { Card, Col, Container, Row, Button } from "react-bootstrap";
 import { customFetch } from "../utils";
+import { useGlobalContext } from "../context";
 
 const Landing = () => {
   const [profiles, setProfiles] = useState([]);
+  const { state } = useGlobalContext();
 
   useEffect(() => {
     const fetchData = async () => {
       try {
         const response = await customFetch("http://localhost:3000/profiles");
-        // console.log(response.data);
         setProfiles(response.data);
       } catch (error) {
         console.error("Error fetching profiles:", error);
@@ -18,6 +19,23 @@ const Landing = () => {
 
     fetchData();
   }, []);
+
+  const handleUpdate = (profileId) => {
+    // Implement the update logic based on the profileId
+    console.log(`Update profile with id: ${profileId}`);
+  };
+
+  const handleDelete = async (profileId) => {
+    try {
+      // Implement the delete logic based on the profileId
+      await customFetch.delete(`http://localhost:3000/profiles/${profileId}`);
+      setProfiles((prevProfiles) =>
+        prevProfiles.filter((profile) => profile.id !== profileId)
+      );
+    } catch (error) {
+      console.error(`Error deleting profile with id ${profileId}:`, error);
+    }
+  };
 
   return (
     <Container className="mt-4">
@@ -41,7 +59,33 @@ const Landing = () => {
                     </ul>
                   </>
                 )}
-                {/* Render other details as needed */}
+
+                {/* Render update and delete buttons based on the user's role */}
+                {state.loggedUser?.role === "admin" && (
+                  <>
+                    <Button
+                      variant="danger"
+                      className="me-2"
+                      onClick={() => handleDelete(profile.id)}
+                    >
+                      Delete
+                    </Button>
+                    <Button
+                      variant="primary"
+                      onClick={() => handleUpdate(profile.id)}
+                    >
+                      Update
+                    </Button>
+                  </>
+                )}
+                {state.loggedUser?.role === "editor" && (
+                  <Button
+                    variant="primary"
+                    onClick={() => handleUpdate(profile.id)}
+                  >
+                    Update
+                  </Button>
+                )}
               </Card.Body>
             </Card>
           </Col>
