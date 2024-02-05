@@ -1,40 +1,51 @@
-import { createContext, useState, useContext } from "react";
+import { createContext, useContext, useReducer } from "react";
 
 const AppContext = createContext();
 
+const initialState = {
+  loggedUser: null,
+  canEdit: false,
+  canDelete: false
+};
+
+const globalReducer = (state, action) => {
+  switch (action.type) {
+    case "LOGIN_USER":
+      const { role } = action.payload;
+
+      // Set canEdit and canDelete based on the user's role
+      let canEdit = false;
+      let canDelete = false;
+
+      if (role === "admin") {
+        canEdit = true;
+        canDelete = true;
+      } else if (role === "editor") {
+        canEdit = true;
+        canDelete = false;
+      }
+      return {
+        ...state,
+        loggedUser: action.payload,
+        canEdit,
+        canDelete,
+      };
+    // ... other cases
+    default:
+      return state;
+  }
+};
+
 export const AppProvider = ({ children }) => {
-  // Load tasks from local storage or use an empty array
 
-  // state variable for storing tasks
-  const [tasks, setTasks] = useState([]);
-
-  // Function to delete a task by ID
-  const deleteTask = (id) => {
-    // Filter out the task with the specified ID
-    const updatedTasks = tasks.filter((task) => task.id !== id);
-    // Update the state with the new tasks
-    setTasks(updatedTasks);
-  };
-
-  // Function to update a task
-  const updateTask = (updatedTask) => {
-    // Find the index of the task to be updated
-    const taskIndex = tasks.findIndex((task) => task.id === updatedTask.id);
-
-    // If the task is found, update it in the array
-    const updatedTasks = [...tasks];
-    updatedTasks[taskIndex] = updatedTask;
-    setTasks(updatedTasks);
-  };
+    const [state, dispatch] = useReducer(globalReducer, initialState);
 
 
   return (
     <AppContext.Provider
       value={{
-        deleteTask,
-        tasks,
-        setTasks,
-        updateTask,
+        state,
+        dispatch,
       }}
     >
       {children}
